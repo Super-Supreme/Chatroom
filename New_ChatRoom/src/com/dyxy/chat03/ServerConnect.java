@@ -1,6 +1,6 @@
 package com.dyxy.chat03;
 /*
- * ·şÎñ¶Ë±»¶à¸ö¿Í»§¶ËÁ¬½Ó¿ªÆôµÄÏß³Ì
+ * æœåŠ¡ç«¯è¢«å¤šä¸ªå®¢æˆ·ç«¯è¿æ¥å¼€å¯çš„çº¿ç¨‹
  * 
  */
 import java.io.Closeable;
@@ -22,13 +22,15 @@ public class ServerConnect implements Runnable{
 			dout = new DataOutputStream(client.getOutputStream());
 			this.isRunning=true;
 			name=receive();
+			this.send("æ¬¢è¿å›æ¥ï¼");
+			this.sendOthers(this.name+"æ¥åˆ°äº†Super-Supremeçš„èŠå¤©å®¤",true);
 		} catch (Exception e) {
 			System.out.println("-------client----------");
 			close(din,dout,client);
 			isRunning=false;
 		}
 	}
-	//½ÓÊÜÏûÏ¢
+	//æ¥å—æ¶ˆæ¯
 	private String receive() {
 		String msg=null;
 		try {
@@ -41,7 +43,7 @@ public class ServerConnect implements Runnable{
 		return msg;
 	}
 	
-	//·¢ËÍÏûÏ¢
+	//å‘é€æ¶ˆæ¯
 	private void send(String msg) {
 		try {
 			dout.writeUTF(msg);
@@ -52,17 +54,19 @@ public class ServerConnect implements Runnable{
 			System.out.println("-------send--------");
 		}
 	}
-	//ÈºÁÄ
-	private void sendOthers(String msg) {
+	//ç¾¤èŠ
+	private void sendOthers(String msg,boolean isSystem) {
 		for(ServerConnect other : ServerChat.allClient) {
 			if(other==this) {
 				continue;
+			}if(!isSystem) {
+				other.send(this.name+"å¯¹æ‰€æœ‰äººè¯´ï¼š" + msg);
 			}else {
 				other.send(msg);
 			}
 		}
 	}
-	//ÊÍ·Å×ÊÔ´
+	//é‡Šæ”¾èµ„æº
 	public static void close(Closeable... target) {
 		for(Closeable shut:target) {
 			try {
@@ -82,11 +86,12 @@ public class ServerConnect implements Runnable{
 			if (msg!=null) {
 				if ("bye".equals(msg)) {
 					isRunning = false;
+					sendOthers(this.name+"ç¦»å¼€äº†èŠå¤©å®¤ã€‚", true);
 				} else {
-					sendOthers(this.name+"¶ÔËùÓĞÈËËµ£º" + msg);
+					sendOthers(msg,false);
 				}
 			}else {
-				send("·şÎñÆ÷£º"+"½ÓÊÜ¿Í»§¶ËµÄÏûÏ¢·¢Éú´íÎó£¡");
+				send("æœåŠ¡å™¨ï¼š"+"æ¥å—å®¢æˆ·ç«¯çš„æ¶ˆæ¯å‘ç”Ÿé”™è¯¯ï¼");
 			}
 		}
 		close(din,dout,client);
