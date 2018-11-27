@@ -86,7 +86,9 @@ public class ServerConnect implements Runnable{
 			if (msg!=null) {
 				if ("bye".equals(msg)) {
 					isRunning = false;
+					ServerChat.allClient.remove(this);
 					sendOthers(this.name+"离开了聊天室。", true);
+					
 				} else {
 					sendOthers(msg,false);
 				}
