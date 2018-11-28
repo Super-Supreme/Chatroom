@@ -2,8 +2,8 @@ package com.dyxy.chat04;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 /*
- * ¿Í»§¶Ë
- * ¼ÓÈëÈİÆ÷£¬ÊµÏÖÈºÁÄ
+ * å®¢æˆ·ç«¯
+ *ç›®æ ‡ï¼šå®ç°ç§èŠï¼Œçº¦å®šç§èŠçš„æ•°æ®æ ¼å¼ï¼š @xxx:msg
  * 
  */
 import java.net.Socket;
@@ -12,8 +12,8 @@ public class Client {
 	public static void main(String[] args) {
 		Socket client=null;
 		try {
-			System.out.println("¿Í»§¶ËÕıÔÚÆô¶¯¡£¡£¡£¡£");
-			System.out.println("ÇëÊäÈëÓÃ»§Ãû£º");
+			System.out.println("å®¢æˆ·ç«¯æ­£åœ¨å¯åŠ¨ã€‚ã€‚ã€‚ã€‚");
+			System.out.println("è¯·è¾“å…¥ç”¨æˆ·åï¼š");
 			BufferedReader input_name=new BufferedReader(new InputStreamReader(System.in));
 			String name=input_name.readLine();
 			client=new Socket("localhost", 7777);
