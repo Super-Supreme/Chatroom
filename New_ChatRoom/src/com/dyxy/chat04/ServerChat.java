@@ -1,8 +1,8 @@
 package com.dyxy.chat04;
 
 /*
- * ·şÎñÆ÷¶Ë
- * ¼ÓÈëÈİÆ÷£¬ÊµÏÖÈºÁÄ
+ * æœåŠ¡å™¨ç«¯
+ * ç›®æ ‡ï¼šå®ç°ç§èŠï¼Œçº¦å®šç§èŠçš„æ•°æ®æ ¼å¼ï¼š @xxx:msg
  * 
  */
 
@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ServerChat {
-	//Ìí¼Ó²¢·¢ÈİÆ÷CopyOnWriteArrayList<>()£¬´æ´¢ËùÓĞclientµÄĞÅÏ¢
+	//æ·»åŠ å¹¶å‘å®¹å™¨CopyOnWriteArrayList<>()ï¼Œå­˜å‚¨æ‰€æœ‰clientçš„ä¿¡æ¯
 	public static CopyOnWriteArrayList<ServerConnect> allClient=new CopyOnWriteArrayList<ServerConnect>();
 	public static void main(String[] args) {
 		ServerSocket server = null;
@@ -20,17 +20,17 @@ public class ServerChat {
 		int count=0;
 		try {
 			server = new ServerSocket(7777);
-			System.out.println("·şÎñÒÑÆô¶¯£¬µÈ´ı¿Í»§¶ËÁ¬½Ó¡£¡£¡£");
+			System.out.println("æœåŠ¡å·²å¯åŠ¨ï¼Œç­‰å¾…å®¢æˆ·ç«¯è¿æ¥ã€‚ã€‚ã€‚");
 			while (isRunning) {
 				client = server.accept();
-				System.out.println((++count)+"¸ö¿Í»§¶ËÒÑÁ¬½Ó");
+				System.out.println((++count)+"ä¸ªå®¢æˆ·ç«¯å·²è¿æ¥");
 				ServerConnect sc=new ServerConnect(client);
-				//½«Ã¿¸öclient¶ÔÏó¶ªµ½ÈİÆ÷ÖĞ£¬½øĞĞ¹ÜÀí¡£
+				//å°†æ¯ä¸ªclientå¯¹è±¡ä¸¢åˆ°å®¹å™¨ä¸­ï¼Œè¿›è¡Œç®¡ç†ã€‚
 				allClient.add(sc);
 				new Thread(sc).start();
 			}
 		} catch (Exception e) {
-			System.out.println("·şÎñÆ÷´íÎó£¬ÇëÖØĞÂÆô¶¯¡£¡£¡£");
+			System.out.println("æœåŠ¡å™¨é”™è¯¯ï¼Œè¯·é‡æ–°å¯åŠ¨ã€‚ã€‚ã€‚");
 			isRunning = false;
 		}
 	}
