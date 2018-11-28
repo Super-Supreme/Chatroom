@@ -1,7 +1,8 @@
 package com.dyxy.chat04;
+
 /*
- * ·şÎñ¶Ë±»¶à¸ö¿Í»§¶ËÁ¬½Ó¿ªÆôµÄÏß³Ì
- * 
+ * æœåŠ¡ç«¯è¢«å¤šä¸ªå®¢æˆ·ç«¯è¿æ¥å¼€å¯çš„çº¿ç¨‹
+ * ç›®æ ‡ï¼šå®ç°ç§èŠï¼Œçº¦å®šç§èŠçš„æ•°æ®æ ¼å¼ï¼š @xxx:msg
  */
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -9,68 +10,90 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ServerConnect implements Runnable{
+public class ServerConnect implements Runnable {
 	private DataInputStream din = null;
 	private DataOutputStream dout = null;
-	private Socket client=null;
+	private Socket client = null;
 	private boolean isRunning;
 	private String name;
+
 	public ServerConnect(Socket client) {
-		this.client=client;
+		this.client = client;
 		try {
 			din = new DataInputStream(client.getInputStream());
 			dout = new DataOutputStream(client.getOutputStream());
-			this.isRunning=true;
-			name=receive();
-			this.send("»¶Ó­»ØÀ´£¡");
-			this.sendOthers(this.name+"À´µ½ÁËSuper-SupremeµÄÁÄÌìÊÒ",true);
+			this.isRunning = true;
+			name = receive();
+			this.send("æ¬¢è¿å›æ¥ï¼");
+			this.sendOthers(this.name + "æ¥åˆ°äº†Super-Supremeçš„èŠå¤©å®¤", true);
 		} catch (Exception e) {
 			System.out.println("-------client----------");
-			close(din,dout,client);
-			isRunning=false;
+			close(din, dout, client);
+			isRunning = false;
 		}
 	}
-	//½ÓÊÜÏûÏ¢
+
+	// æ¥å—æ¶ˆæ¯
 	private String receive() {
-		String msg=null;
+		String msg = null;
 		try {
-			msg=din.readUTF();
+			msg = din.readUTF();
 		} catch (IOException e) {
-			close(din,dout,client);
-			isRunning=false;
+			close(din, dout, client);
+			isRunning = false;
 			System.out.println("---------receive----------");
 		}
 		return msg;
 	}
-	
-	//·¢ËÍÏûÏ¢
+
+	// å‘é€æ¶ˆæ¯
 	private void send(String msg) {
 		try {
 			dout.writeUTF(msg);
 			dout.flush();
 		} catch (IOException e) {
-			close(din,dout,client);
-			isRunning=false;
+			close(din, dout, client);
+			isRunning = false;
 			System.out.println("-------send--------");
 		}
 	}
-	//ÈºÁÄ
-	private void sendOthers(String msg,boolean isSystem) {
-		for(ServerConnect other : ServerChat.allClient) {
-			if(other==this) {
-				continue;
-			}if(!isSystem) {
-				other.send(this.name+"¶ÔËùÓĞÈËËµ£º" + msg);
-			}else {
-				other.send(msg);
+
+	/*
+	 * ç¾¤èŠï¼šè·å–è¦å‘çš„ä¿¡æ¯å‘é€ç»™å…¶ä»–å®¢æˆ·ç«¯ 
+	 * ç§èŠï¼šçº¦å®šæ•°æ®æ ¼å¼ï¼š @xxx:msg
+	 * 
+	 */
+	private void sendOthers(String msg, boolean isSystem) {
+
+		if (msg.startsWith("@") && msg.contains(":")) {// ç§èŠ
+			String sendName = msg.substring(1, msg.indexOf(":"));// è·å–ç§èŠåå­—
+			msg = msg.substring(msg.indexOf(":") + 1);// è·å–ä¿¡æ¯
+			for (ServerConnect other : ServerChat.allClient) {
+				if (other.name.equalsIgnoreCase(sendName)) {
+					other.send(this.name + "å·å·åœ°å¯¹ä½ è¯´ï¼š" + msg);
+					break;
+				}
+			}
+
+		} else {// ç¾¤èŠ
+			for (ServerConnect other : ServerChat.allClient) {
+				if (other == this) {
+					continue;
+				}
+				if (!isSystem) {
+					other.send(this.name + "å¯¹æ‰€æœ‰äººè¯´ï¼š" + msg);
+				} else {
+					other.send(msg);
+				}
 			}
 		}
 	}
-	//ÊÍ·Å×ÊÔ´
+
+	// é‡Šæ”¾èµ„æº
 	public static void close(Closeable... target) {
-		for(Closeable shut:target) {
+		for (Closeable shut : target) {
 			try {
-				if(null!=target) {
+				if (null != target) {
 					shut.close();
 				}
 			} catch (Exception e) {
@@ -79,23 +102,25 @@ public class ServerConnect implements Runnable{
 			}
 		}
 	}
+
 	@Override
 	public void run() {
-		while (isRunning) {	
-			String msg=receive();
-			if (msg!=null) {
+		while (isRunning) {
+			String msg = receive();
+			if (msg != null) {
 				if ("bye".equals(msg)) {
 					isRunning = false;
 					ServerChat.allClient.remove(this);
-					sendOthers(this.name+"Àë¿ªÁËÁÄÌìÊÒ¡£", true);
+					sendOthers(this.name + "ç¦»å¼€äº†èŠå¤©å®¤ã€‚", true);
 				} else {
-					sendOthers(msg,false);
+					sendOthers(msg, false);
 				}
-			}else {
-				send("·şÎñÆ÷£º"+"½ÓÊÜ¿Í»§¶ËµÄÏûÏ¢·¢Éú´íÎó£¡");
+			} else {
+				send("æœåŠ¡å™¨ï¼š" + "æ¥å—å®¢æˆ·ç«¯çš„æ¶ˆæ¯å‘ç”Ÿé”™è¯¯ï¼");
 			}
 		}
-		close(din,dout,client);
+		close(din, dout, client);
 	}
 
 }
+
